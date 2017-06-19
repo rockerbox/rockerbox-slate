@@ -168,9 +168,7 @@ If using curl, use the <code class="prettyprint">-b</code> and <code class="pret
 
 <p>Once authenticated, you can use <code class="prettyprint">/account/permissions</code> to view the advertisers you have access to.</p>
 
-          <h1 id="model-apis">Model APIs</h1>
-
-<p>The model APIs allow us to model information that we receive from an on page pixel. These APIs are the building blocks for our UI and allow the user to store saved and recurring data queries.</p>
+          <h1 id="apis">APIs</h1>
 
 <h3 id="generic-anatomy-of-a-response">Generic anatomy of a Response</h3>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
@@ -208,10 +206,16 @@ If using curl, use the <code class="prettyprint">-b</code> and <code class="pret
 <p>Example action</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-    </span><span class="nt">"action_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"action_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checkout"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"acvertiser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_advertiser"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"url_pattern"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"checkout"</span><span class="p">]</span><span class="w">
+    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"response"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
+        </span><span class="nt">"action_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"action_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checkout"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"acvertiser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_advertiser"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"url_pattern"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"checkout"</span><span class="p">],</span><span class="w">
+        </span><span class="nt">"featured"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+        </span><span class="s2">"has_filter"</span><span class="err">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"filter_pattern"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"checkout/complete"</span><span class="p">,</span><span class="w"> </span><span class="s2">"checkout/receipt"</span><span class="p">]</span><span class="w">
+    </span><span class="p">}]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
@@ -238,12 +242,24 @@ Below we take you through how to view, create, update and delete an action.</p>
 <td>this is an array of strings that are used to match against the url associated with an event</td>
 </tr>
 <tr>
-<td>operator</td>
-<td>by default, this should only be set to &ldquo;or&rdquo;. The behavior associated with an &ldquo;and&rdquo; operator can be achieved by comma seperating strings</td>
-</tr>
-<tr>
 <td>advertiser</td>
 <td>this is the advertiser that the action is associated with</td>
+</tr>
+<tr>
+<td>action_name</td>
+<td>the name that appears as the segment title in the UI</td>
+</tr>
+<tr>
+<td>has_filter</td>
+<td>binary whether or not the segment has sub filters</td>
+</tr>
+<tr>
+<td>filter_pattern</td>
+<td>(optional) if has filter then these are the patterns that comprise the sub filter, the patterns that further filter the segment</td>
+</tr>
+<tr>
+<td>featured</td>
+<td>The first segment to appear when the dashboard loads in the UI</td>
 </tr>
 </tbody></table>
 
@@ -252,7 +268,7 @@ Below we take you through how to view, create, update and delete an action.</p>
 <blockquote>
 <p>Request All</p>
 </blockquote>
-<pre class="highlight shell"><code>curl http://crusher.getrockerbox.com/crusher/funnel/action?format<span class="o">=</span>json
+<pre class="highlight shell"><code>curl http://hindsight.getrockerbox.com/crusher/funnel/action?format<span class="o">=</span>json
 </code></pre>
 
 <blockquote>
@@ -262,16 +278,21 @@ Below we take you through how to view, create, update and delete an action.</p>
     </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"response"</span><span class="p">:[</span><span class="w">
         </span><span class="p">{</span><span class="w">
-            </span><span class="nt">"advertiser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_advertiser"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"action_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
             </span><span class="nt">"action_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checkout"</span><span class="p">,</span><span class="w">
-            </span><span class="nt">"url_pattern"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"checkout"</span><span class="w"> </span><span class="p">],</span><span class="w">
-            </span><span class="nt">"action_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+            </span><span class="nt">"acvertiser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_advertiser"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"url_pattern"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"checkout"</span><span class="p">],</span><span class="w">
+            </span><span class="nt">"featured"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+            </span><span class="s2">"has_filter"</span><span class="err">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"filter_pattern"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"checkout/complete"</span><span class="p">,</span><span class="w"> </span><span class="s2">"checkout/receipt"</span><span class="p">]</span><span class="w">
         </span><span class="p">},</span><span class="w">
         </span><span class="p">{</span><span class="w">
             </span><span class="nt">"advertiser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_advertiser"</span><span class="p">,</span><span class="w">
             </span><span class="nt">"action_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"necklaces utm"</span><span class="p">,</span><span class="w">
             </span><span class="nt">"url_pattern"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"utm"</span><span class="w"> </span><span class="p">],</span><span class="w">
-            </span><span class="nt">"action_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="w">
+            </span><span class="nt">"action_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"has_filter"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"featured"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -279,37 +300,9 @@ Below we take you through how to view, create, update and delete an action.</p>
 
 <p>To view all the actions that you have created, you can simply send a get request to the action endpoint with the format query string parameter set to json.</p>
 
-<p><code class="prettyprint">GET http://crusher.getrockerbox.com/crusher/funnel/action?format=json</code></p>
+<p><code class="prettyprint">GET http://hindsight.getrockerbox.com/crusher/funnel/action?format=json</code></p>
 
 <p>The response will consist of a list of action objects, which are defined above in the <strong>Anatomy of an action</strong>.</p>
-
-<h2 id="get-a-specific-action">Get a specific action</h2>
-
-<blockquote>
-<p>Request One</p>
-</blockquote>
-<pre class="highlight shell"><code>curl http://crusher.getrockerbox.com/crusher/funnel/action?format<span class="o">=</span>json&amp;id<span class="o">=</span>1
-</code></pre>
-
-<blockquote>
-<p>Response One</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"response"</span><span class="p">:[{</span><span class="w">
-        </span><span class="nt">"advertiser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_advertiser"</span><span class="p">,</span><span class="w">
-        </span><span class="nt">"action_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checkout"</span><span class="p">,</span><span class="w">
-        </span><span class="nt">"url_pattern"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"checkout"</span><span class="w"> </span><span class="p">],</span><span class="w">
-        </span><span class="nt">"action_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
-    </span><span class="p">}]</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>To view a specific action, the request is modified to additional query string parameter specifying the id of the action you would like to view.</p>
-
-<p><code class="prettyprint">GET http://crusher.getrockerbox.com/crusher/funnel/action?format=json&amp;id=&lt;ACTION_ID&gt;</code></p>
-
-<p>In this case, rather than return a list we instead see that a single action is returned for our response</p>
 
 <h2 id="creating-an-action">Creating an action</h2>
 
@@ -322,7 +315,7 @@ Below we take you through how to view, create, update and delete an action.</p>
     "url_pattern": [ "checkout" ],
 }
 EOF
-</span>curl -X POST -d @action http://crusher.getrockerbox.com/crusher/funnel/action
+</span>curl -X POST -d @action http://hindsight.getrockerbox.com/crusher/funnel/action
 </code></pre>
 
 <blockquote>
@@ -341,51 +334,16 @@ EOF
 
 <p>To create a new action, post a json object that has a name to identify the action, <code class="prettyprint">action_name</code>, and a list of patterns you want to match in the <code class="prettyprint">url_pattern</code>.</p>
 
-<p><code class="prettyprint">POST http://crusher.getrockerbox.com/crusher/funnel/action?format=json</code></p>
+<p><code class="prettyprint">POST http://hindsight.getrockerbox.com/crusher/funnel/action?format=json</code></p>
 
 <p>The response from this endpoint will be a standard action json object described above in the anatomy of an action.</p>
-
-<h2 id="updating-an-action">Updating an action</h2>
-
-<blockquote>
-<p>Update</p>
-</blockquote>
-<pre class="highlight shell"><code>cat <span class="sh">&lt;&lt;EOF &gt; action
-{
-    "action_id": 1,
-    "action_name": "checkout",
-    "url_pattern": [ "checkOUT" ],
-}
-EOF
-</span>curl -X PUT -d @action http://crusher.getrockerbox.com/crusher/funnel/action?id<span class="o">=</span>1
-</code></pre>
-
-<blockquote>
-<p>Response</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"response"</span><span class="p">:{</span><span class="w">
-        </span><span class="nt">"advertiser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_advertiser"</span><span class="p">,</span><span class="w">
-        </span><span class="nt">"action_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checkout"</span><span class="p">,</span><span class="w">
-        </span><span class="nt">"url_pattern"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">"checkOUT"</span><span class="w"> </span><span class="p">],</span><span class="w">
-        </span><span class="nt">"action_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>To update an action, put a json object with the desired changes to an endpoint which has an <code class="prettyprint">action_id</code> qs parameter corresponding to the object you want to update.</p>
-
-<p><code class="prettyprint">PUT http://crusher.getrockerbox.com/crusher/funnel/action?format=json&amp;id=&lt;ACTION_ID&gt;</code></p>
-
-<p>The response will be the standard json object.</p>
 
 <h2 id="deleting-an-action">Deleting an action</h2>
 
 <blockquote>
 <p>DELETE</p>
 </blockquote>
-<pre class="highlight shell"><code>curl -X DELETE http://crusher.getrockerbox.com/crusher/funnel/action?id<span class="o">=</span>1
+<pre class="highlight shell"><code>curl -X DELETE http://hindsight.getrockerbox.com/crusher/funnel/action?id<span class="o">=</span>1
 </code></pre>
 
 <blockquote>
@@ -401,7 +359,7 @@ EOF
 
 <p>To delete an action, send a delete request to the endpoint with the <code class="prettyprint">action_id</code> qs parameter corresponding to the object you want to delete.</p>
 
-<p><code class="prettyprint">DELETE http://crusher.getrockerbox.com/crusher/funnel/action?format=json&amp;id=&lt;ACTION_ID&gt;</code></p>
+<p><code class="prettyprint">DELETE http://hindsight.getrockerbox.com/crusher/funnel/action?format=json&amp;id=&lt;ACTION_ID&gt;</code></p>
 
 <p>The response will be an object with only the action_id of the deleted object.</p>
 
@@ -728,580 +686,172 @@ The search APIs give us the ability to look at the following characterstics abou
 <li>URLs: these are the URLs that match the pattern</li>
 <li>UIDs: these are the UIDs that match the pattern</li>
 <li>Count: this gives us a summary about the pattern</li>
-<li>Timeseries: this gives us a timeseries summary about how the pattern changes over time</li>
 </ul>
 
-          <h1 id="pattern-search">Pattern search</h1>
+          <h1 id="udf">UDF</h1>
 
 <blockquote>
-<p>Request (count for a single pattern): </p>
-</blockquote>
-<pre class="highlight shell"><code>curl <span class="s2">"http://crusher.getrockerbox.com/crusher/search/count?search=necklaces"</span> 
-</code></pre>
-
-<blockquote>
-<p>Response (count for single pattern):</p>
+<p>Example Response</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-    </span><span class="nt">"logic"</span><span class="p">:</span><span class="w"> </span><span class="s2">"should"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"search"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-        </span><span class="s2">"necklaces"</span><span class="w">
-    </span><span class="p">],</span><span class="w">
-    </span><span class="nt">"summary"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="nt">"num_users"</span><span class="p">:</span><span class="w"> </span><span class="mi">1200</span><span class="w">
-    </span><span class="p">}</span><span class="w">
+    </span><span class="nt">"response"</span><span class="p">:</span><span class="w"> </span><span class="p">[{}],</span><span class="w">
+    </span><span class="nt">"search"</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">"/"</span><span class="p">]],</span><span class="w">
+    </span><span class="nt">"summary"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+    </span><span class="nt">"after"</span><span class="p">:</span><span class="w"> </span><span class="p">[{}],</span><span class="w">
+    </span><span class="nt">"before"</span><span class="p">:</span><span class="w"> </span><span class="p">[{}]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<blockquote>
-<p>Request 
-- urls that match pattern</p>
-</blockquote>
-<pre class="highlight shell"><code>
-curl <span class="s2">"http://crusher.getrockerbox.com/crusher/search/urls?search=rockerbox"</span>
-</code></pre>
+<p>UDF or User Defined Functions are the core way for which we return data. A standard set of datasets containing information about the users` onsite and offsite behavior as well as user and domain level data arre passed into the user defined function. The function then analyses and aggregated the data to create the response.</p>
 
-<blockquote>
-<p>Response 
-- urls that match pattern</p>
-</blockquote>
-<pre class="highlight shell"><code><span class="o">{</span>
-    <span class="s2">"logic"</span>: <span class="s2">"must"</span>,
-    <span class="s2">"results"</span>: <span class="o">[</span>
-        <span class="o">{</span>
-            <span class="s2">"count"</span>: 1,
-            <span class="s2">"url"</span>: <span class="s2">"http://www.baublebar.com/whats-new/just-added.html?cvosrc=display.rockerbox.072015_JulyDigAdsRefresh_300x250_3_9718787&amp;utm_source=rockerbox&amp;utm_medium=display&amp;utm_campaign=072015_JulyDigAdsRefresh_300x250_3_9718787"</span>
-        <span class="o">}</span>,
-        <span class="o">{</span>
-            <span class="s2">"count"</span>: 1,
-            <span class="s2">"url"</span>: <span class="s2">"http://www.baublebar.com/whats-new/just-added.html?cvosrc=display.rockerbox.072015_JulyDigAdsRefresh_300x600_1_4279296&amp;utm_source=rockerbox&amp;utm_medium=display&amp;utm_campaign=072015_JulyDigAdsRefresh_300x600_1_4279296"</span>
-        <span class="o">}</span>,
-        <span class="o">{</span>
-            <span class="s2">"count"</span>: 1,
-            <span class="s2">"url"</span>: <span class="s2">"http://www.baublebar.com/whats-new/just-added.html?cvosrc=display.rockerbox.072015_JulyDigAdsRefresh_728x90_1_3810899&amp;utm_source=rockerbox&amp;utm_medium=display&amp;utm_campaign=072015_JulyDigAdsRefresh_728x90_1_3810899"</span>
-        <span class="o">}</span>
-    <span class="o">]</span>,
-    <span class="s2">"search"</span>: <span class="o">[</span>
-        <span class="s2">"rockerbox"</span>
-    <span class="o">]</span>,
-    <span class="s2">"summary"</span>: <span class="o">{</span>
-        <span class="s2">"num_urls"</span>: 3,
-        <span class="s2">"num_users"</span>: 3
-    <span class="o">}</span>,
-    <span class="s2">"timeout"</span>: 60
-<span class="o">}</span>
-</code></pre>
+<p>The UDF requested is determined by the RESTful URL schema . See the examples below for samples of existing udfs and schema acess pattern.</p>
 
-<blockquote>
-<p>Request 
-- uids for multiple patterns using <strong>AND</strong> logic</p>
-</blockquote>
-<pre class="highlight shell"><code>
-curl <span class="s2">"http://crusher.getrockerbox.com/crusher/search/uids?search=necklaces,pepperjam"</span>
-</code></pre>
+<p>All response are in JSON format.</p>
 
-<blockquote>
-<p>Response 
-- uids for multiple patterns using <strong>AND</strong> logic</p>
-</blockquote>
-<pre class="highlight shell"><code><span class="o">{</span>
-    <span class="s2">"logic"</span>: <span class="s2">"must"</span>,
-    <span class="s2">"results"</span>: <span class="o">[</span>
-        <span class="s2">"1658345989907319038"</span>,
-        <span class="s2">"8544236950523550015"</span>,
-        <span class="s2">"3647988598677495450"</span>,
-        <span class="s2">"8377247509133269564"</span>,
-        <span class="s2">"8728953026525723133"</span>,
-        <span class="s2">"4371882728305824796"</span>,
-        <span class="s2">"4355801865744751912"</span>,
-        <span class="s2">"3071870354224070944"</span>,
-        <span class="s2">"8282590386514880072"</span>,
-        <span class="s2">"5213257658303005847"</span>,
-        <span class="s2">"682573251720908722"</span>
-    <span class="o">]</span>,
-    <span class="s2">"search"</span>: <span class="o">[</span>
-        <span class="s2">"necklaces"</span>,
-        <span class="s2">"pepperjam"</span>
-    <span class="o">]</span>,
-    <span class="s2">"summary"</span>: <span class="o">{</span>
-        <span class="s2">"num_users"</span>: 11
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre>
-
-<blockquote>
-<p>Request 
-- timeseries for multiple patterns using <strong>AND</strong> logic</p>
-</blockquote>
-<pre class="highlight shell"><code>
-curl <span class="s2">"http://crusher.getrockerbox.com/crusher/search/timeseries?search=necklaces,pepperjam"</span>
-</code></pre>
-
-<blockquote>
-<p>Response 
-- timeseries for multiple patterns using <strong>AND</strong> logic</p>
-</blockquote>
-<pre class="highlight shell"><code><span class="o">{</span>
-    <span class="s2">"logic"</span>: <span class="s2">"must"</span>,
-    <span class="s2">"results"</span>: <span class="o">[</span>
-        <span class="o">{</span>
-            <span class="s2">"date"</span>: <span class="s2">"2015-07-29 00:00:00"</span>,
-            <span class="s2">"num_users"</span>: 4,
-            <span class="s2">"num_visits"</span>: 5
-        <span class="o">}</span>,
-        <span class="o">{</span>
-            <span class="s2">"date"</span>: <span class="s2">"2015-07-30 00:00:00"</span>,
-            <span class="s2">"num_users"</span>: 7,
-            <span class="s2">"num_visits"</span>: 7
-        <span class="o">}</span>
-    <span class="o">]</span>,
-    <span class="s2">"search"</span>: <span class="o">[</span>
-        <span class="s2">"necklaces"</span>,
-        <span class="s2">"pepperjam"</span>
-    <span class="o">]</span>,
-    <span class="s2">"summary"</span>: <span class="o">{</span>
-        <span class="s2">"num_users"</span>: 11,
-        <span class="s2">"num_visits"</span>: 12
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre>
-
-<blockquote>
-<p>Request 
-- timeseries for multiple patterns using <strong>OR</strong> logic</p>
-</blockquote>
-<pre class="highlight shell"><code>
-curl <span class="s2">"http://crusher.getrockerbox.com/crusher/search/timeseries?search=necklaces,pepperjam&amp;logic=or"</span>
-</code></pre>
-
-<blockquote>
-<p>Response 
-- timeseries for multiple patterns using <strong>OR</strong> logic</p>
-</blockquote>
-<pre class="highlight shell"><code><span class="o">{</span>
-    <span class="s2">"logic"</span>: <span class="s2">"should"</span>,
-    <span class="s2">"results"</span>: <span class="o">[</span>
-        <span class="o">{</span>
-            <span class="s2">"date"</span>: <span class="s2">"2015-07-29 00:00:00"</span>,
-            <span class="s2">"num_users"</span>: 708,
-            <span class="s2">"num_visits"</span>: 2327
-        <span class="o">}</span>,
-        <span class="o">{</span>
-            <span class="s2">"date"</span>: <span class="s2">"2015-07-30 00:00:00"</span>,
-            <span class="s2">"num_users"</span>: 993,
-            <span class="s2">"num_visits"</span>: 2858
-        <span class="o">}</span>
-    <span class="o">]</span>,
-    <span class="s2">"search"</span>: <span class="o">[</span>
-        <span class="s2">"necklaces"</span>,
-        <span class="s2">"pepperjam"</span>
-    <span class="o">]</span>,
-    <span class="s2">"summary"</span>: <span class="o">{</span>
-        <span class="s2">"num_users"</span>: 1653,
-        <span class="s2">"num_visits"</span>: 5185
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre>
-
-<p>This endpoint allows us to search for the occurance of a pattern or multiple patterns within a single URL.</p>
-
-<p>The pattern search API supports:</p>
-
-<ul>
-<li>four query result types (urls, uids, count, timeseries).</li>
-<li>two types of logic when searching for a pattern within a URL (&ldquo;or&rdquo;,&ldquo;and&rdquo;)</li>
-</ul>
-
-<h2 id="http-request">HTTP Request</h2>
-
-<p><code class="prettyprint">GET http://crusher.getrockerbox.com/crusher/search/&lt;QUERY_TYPE&gt;</code></p>
-
-<h2 id="query-parameters">Query Parameters</h2>
+<p>Every UDF will have the following items in its response:</p>
 
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Default</th>
+<th>Key</th>
 <th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>search</td>
-<td>None</td>
-<td>this is a <em>required</em> field. it is a string or comman seperated string of terms  we will look for in the URL. If multiple terms are used, the logic parameter will be used param will be used to perform the search</td>
+<td>response</td>
+<td>this is an auto generated identifier for the action. this identifier will be use later to relate actions to funnels</td>
 </tr>
-<tr>
-<td>logic</td>
-<td>and</td>
-<td>this specifies the logic to use for a search term. specifically, if we are looking for nature,nuture in a url, or would require either nature or nuture, and would require both nature and nuture</td>
-</tr>
-<tr>
-<td>format</td>
-<td>json</td>
-<td>this specifies the response type. currently only json is supported</td>
-</tr>
-<tr>
-<td>timeout</td>
-<td>60</td>
-<td>this is the amount of time in seconds we will attempt to process the query before timing out. Its default and max value is 60 seconds</td>
-</tr>
-</tbody></table>
-
-<aside class="default">Note that the search field is required for all queries</aside>
-
-<h2 id="json-response">JSON Response</h2>
-
-<p>The JSON response will be formatted with the following fields:</p>
-
-<table><thead>
-<tr>
-<th>Field</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
 <tr>
 <td>search</td>
-<td>these are the terms entered as commas seperated values to the search QS parameter</td>
-</tr>
-<tr>
-<td>logic</td>
-<td>this is the logic used interally to evaluate URLs against the pattern(s) specified</td>
+<td>this is an array of strings that are used to match against the url associated with an event</td>
 </tr>
 <tr>
 <td>summary</td>
-<td>this is a summary object describing the results. depending on the query type it will have different values but will always be present</td>
+<td>(optional) by default, this should only be set to &ldquo;or&rdquo;. The behavior associated with an &ldquo;and&rdquo; operator can be achieved by comma seperating strings</td>
 </tr>
 <tr>
-<td>results</td>
-<td>the result object is based on the query type. It will be present for all results with the exception of the count, which will only have a summary object</td>
+<td>before</td>
+<td>(optional) this is the advertiser that the action is associated with</td>
+</tr>
+<tr>
+<td>after</td>
+<td>(optional) this is the advertiser that the action is associated with</td>
 </tr>
 </tbody></table>
 
-<h2 id="json-result-objects">JSON Result Objects</h2>
+<h2 id="get-udf">Get UDF</h2>
 
-<p>This describes the different JSON Result object types that one can expect for the different query types</p>
+<blockquote>
+<p>Request UDF</p>
+</blockquote>
+<pre class="highlight shell"><code>curl http://hindsight.getrockerbox.com/crusher/v1/visitor/&lt;UDF&gt;?url_pattern<span class="o">=</span>/&amp;filter_id<span class="o">=</span>1
+curl http://hindsight.getrockerbox.com/crusher/v1/visitor/domains?url_pattern<span class="o">=</span>/&amp;filter_id<span class="o">=</span>1
+</code></pre>
+
+<blockquote>
+<p>Response</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"response"</span><span class="p">:[</span><span class="w">
+        </span><span class="p">{</span><span class="nt">"count"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="nt">"domain"</span><span class="p">:</span><span class="s2">"recipes.com"</span><span class="p">,</span><span class="nt">"uniques"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="nt">"time to site"</span><span class="p">:</span><span class="mf">5.7666666667</span><span class="p">,</span><span class="nt">"Importance"</span><span class="p">:</span><span class="mf">24690.3333333333</span><span class="p">,</span><span class="nt">"rank"</span><span class="p">:</span><span class="mf">24690.3333333333</span><span class="p">,</span><span class="nt">"num_users"</span><span class="p">:</span><span class="mf">1000000.0</span><span class="p">,</span><span class="nt">"parent_category_name"</span><span class="p">:</span><span class="s2">"Food &amp; Drink"</span><span class="p">,</span><span class="nt">"idf"</span><span class="p">:</span><span class="mf">24690.3333333333</span><span class="p">,</span><span class="nt">"category_name"</span><span class="p">:</span><span class="s2">"Cooking &amp; Recipes"</span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="err">...</span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>To view all the actions that you have created, you can simply send a get request to the action endpoint with the format query string parameter set to json.</p>
+
+<h2 id="datasets">Datasets</h2>
+
+          <h1 id="cached-udf-aggregate-endpoint">Cached UDF (Aggregate) Endpoint</h1>
+
+<blockquote>
+<p>Example response</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"response"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+         </span><span class="p">{}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nt">"search"</span><span class="p">:</span><span class="w"> </span><span class="p">[[</span><span class="s2">"/"</span><span class="p">]],</span><span class="w">
+    </span><span class="nt">"summary"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+    </span><span class="nt">"after"</span><span class="p">:</span><span class="w"> </span><span class="p">[{}],</span><span class="w">
+    </span><span class="nt">"before"</span><span class="p">:</span><span class="w"> </span><span class="p">[{}]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Every action will have the following items in its response:</p>
 
 <table><thead>
 <tr>
-<th>Query Type</th>
+<th>Key</th>
 <th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>urls</td>
-<td>this is a list of objects that contain the URL and the number of matches for that url. it will be sorted based on count</td>
+<td>response</td>
+<td>(required) this is an auto generated identifier for the action. this identifier will be use later to relate actions to funnels</td>
 </tr>
-<tr>
-<td>uids</td>
-<td>this is a list of UID strings associated with the pattern</td>
-</tr>
-<tr>
-<td>timeseries</td>
-<td>this is a timeseries which shows the counts at each respective date</td>
-</tr>
-</tbody></table>
-
-<aside class="warning">Note that the **count** query type does not have a results object present</aside>
-
-          <h1 id="group-url-search">Group URL Search</h1>
-
-<p>This endpoint allows us search for users who visited multiple URL patterns and get the union or intersection of the visits that have occured on these matched pages. </p>
-
-<p>Similar to the the single URL search, this API support:</p>
-
-<ul>
-<li>the query result types: (uids,count,timeseries)</li>
-<li>two type of logic: (union, intersection)</li>
-</ul>
-
-<h2 id="http-request">HTTP Request</h2>
-
-<p><code class="prettyprint">GET http://crusher.getrockerbox.com/crusher/pattern_search/&lt;QUERY_TYPE&gt;</code></p>
-
-<h2 id="query-parameters">Query Parameters</h2>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
 <tr>
 <td>search</td>
-<td>None</td>
-<td>this is a <strong>required</strong> field. the search string is made up of comman seperated patterns and pipe seperated pattern groups. the comma seperated pattern requires all occurances of the pattern to be present in matched urls. the pipe seperation between pattern allows one to look at either the union or intersection of the users who have visited urls that matched the pattern string.</td>
+<td>(required) the url pattern used to create the aggregate</td>
 </tr>
 <tr>
-<td>logic</td>
-<td>intersection</td>
-<td>this specifies whether were looking at the union or intersection of the pattern strings. A union results in reporting based on all the patterns matched. An intersection is looking at the intersection of the two patterns</td>
+<td>summary</td>
+<td>(optional) this is an array of strings that are used to match against the url associated with an event</td>
 </tr>
 <tr>
-<td>format</td>
-<td>json</td>
-<td>this specifies the response type. currently only json is supported</td>
+<td>after</td>
+<td>(optional) by default, this should only be set to</td>
 </tr>
 <tr>
-<td>timeout</td>
-<td>60</td>
-<td>this is the amount of time in seconds we will attempt to process the query before timing out. Its default and max value is 60 seconds</td>
+<td>before</td>
+<td>(optional) domains full time minute</td>
 </tr>
 </tbody></table>
 
-<h2 id="more-on-the-quot-search-quot-and-quot-logic-quot-parameters">More on the &ldquo;search&rdquo; and &ldquo;logic&rdquo; parameters</h2>
+<h2 id="dashboard-aggregate-domains-full-time-minute">Dashboard Aggregate (domains full time minute)</h2>
 
-<p>The search parameter is made up of multiple <strong>URL pattern strings</strong> seperated by pipe characters. 
-A <strong>URL pattern string</strong> is a comma seperated string of values, e.g. &ldquo;nature,nuture&rdquo;.
-When this API evaluates a URL pattern string, the indivual patterns will be evaluated using an  <strong>AND</strong> operation, meaning that every url that matches this pattern must contain all terms in the string.</p>
+<blockquote>
+<p>Request </p>
+</blockquote>
+<pre class="highlight shell"><code>curl http://hindsight.getrockerbox.com/crusher/v1/visitor/domains_full_time_minute/cache?url_pattern<span class="o">=</span>/&amp;filter_id<span class="o">=</span>100
+</code></pre>
 
-<p>The following is an example of two URL pattern strings used as a search parameter:</p>
+<blockquote>
+<p>Response </p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"search"</span><span class="w"> </span><span class="p">:[[</span><span class="s2">"/"</span><span class="p">]],</span><span class="w">
+    </span><span class="nt">"response"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"count"</span><span class="p">:</span><span class="mi">60</span><span class="p">,</span><span class="nt">"domain_idf_hour"</span><span class="p">:</span><span class="mf">36.023456</span><span class="p">,</span><span class="nt">"domain"</span><span class="p">:</span><span class="s2">"rockerbox.com.com"</span><span class="p">,</span><span class="nt">"uniques"</span><span class="p">:</span><span class="mi">55</span><span class="p">,</span><span class="nt">"hour"</span><span class="p">:</span><span class="s2">"15"</span><span class="p">,</span><span class="nt">"url"</span><span class="p">:</span><span class="s2">"http://rockerbox.com/welcome"</span><span class="p">,</span><span class="nt">"num_users"</span><span class="p">:</span><span class="mf">1000000.0</span><span class="p">,</span><span class="nt">"parent_category_name"</span><span class="p">:</span><span class="s2">"Internet &amp; Telecom"</span><span class="p">,</span><span class="nt">"idf"</span><span class="p">:</span><span class="mf">1000.2730</span><span class="p">,</span><span class="nt">"category_idf"</span><span class="p">:</span><span class="mf">0.0045615813</span><span class="p">,</span><span class="nt">"category_hour_idf"</span><span class="p">:</span><span class="mf">0.7843631778</span><span class="p">,</span><span class="nt">"minute"</span><span class="p">:</span><span class="mi">40</span><span class="p">,</span><span class="nt">"category_name"</span><span class="p">:</span><span class="s2">"Internet &amp; Telecom"</span><span class="p">},{</span><span class="err">...</span><span class="p">}],</span><span class="w">
+    </span><span class="nt">"before"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"domain"</span><span class="p">:</span><span class="s2">"forbes.com"</span><span class="p">,</span><span class="nt">"uniques"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="nt">"url"</span><span class="p">:</span><span class="s2">"forbes.com"</span><span class="p">,</span><span class="nt">"visits"</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="nt">"parent_category_name"</span><span class="p">:</span><span class="s2">"News"</span><span class="p">,</span><span class="nt">"time_diff_bucket"</span><span class="p">:</span><span class="mi">600</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="err">..</span><span class="p">}],</span><span class="w">
+    </span><span class="nt">"after"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"domain"</span><span class="p">:</span><span class="s2">"forbes.com"</span><span class="p">,</span><span class="nt">"uniques"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="nt">"url"</span><span class="p">:</span><span class="s2">"forbes.com"</span><span class="p">,</span><span class="nt">"visits"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="nt">"parent_category_name"</span><span class="p">:</span><span class="s2">"News"</span><span class="p">,</span><span class="nt">"time_diff_bucket"</span><span class="p">:</span><span class="mi">600</span><span class="p">},{</span><span class="err">...</span><span class="p">}],</span><span class="w">
+    </span><span class="nt">"summary"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"category"</span><span class="p">:[{</span><span class="nt">"count"</span><span class="p">:</span><span class="mi">981</span><span class="p">,</span><span class="nt">"uniques"</span><span class="p">:</span><span class="mi">55</span><span class="p">,</span><span class="nt">"parent_category_name"</span><span class="p">:</span><span class="s2">"Arts &amp; Entertainment"</span><span class="p">},{</span><span class="err">..</span><span class="p">}],</span><span class="nt">"cross_section"</span><span class="p">:[{</span><span class="nt">"count"</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="nt">"uniques"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="nt">"minute"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="nt">"hour"</span><span class="p">:</span><span class="s2">"00"</span><span class="p">,</span><span class="nt">"parent_category_name"</span><span class="p">:</span><span class="s2">"Arts &amp; Entertainment"</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="err">..</span><span class="p">}]}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
 
-<p><code class="prettyprint">/crusher/pattern_search?search=nature,nuture|wild</code></p>
+<h2 id="domains-full-time-minute">Domains Full Time Minute</h2>
 
-<p>Each URL pattern string is used to find the users associated with each URL pattern string.</p>
+<p>Main user defined function for constructing dashboard ready aggregate. Based on the domains full time minute user defined function. It contains aggregate information regarding a users offsite and onsite behavior for those users who visited a given onsite page (segment). This behavior is aggregated into totals by url visited and domain. As well, this information is also aggregated based on when the user conducted onsite actvity. Offsite behavior is aggregated based on whether the behavior occured before or after an onsite behavior.</p>
 
-<table><thead>
-<tr>
-<th>Pattern</th>
-<th>Users</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>nature,nuture</td>
-<td>User group 1</td>
-</tr>
-<tr>
-<td>wild</td>
-<td>User group 2</td>
-</tr>
-</tbody></table>
+<h3 id="other-cached-udfs">Other Cached UDFs</h3>
 
-<p>The logic parameter will then be used to either take the union or the intersection of the users that match. </p>
+<blockquote>
+<p>Request</p>
+</blockquote>
+<pre class="highlight shell"><code>curl http://hindsight.getrockerbox.com/crusher/v1/visitor/domains_full/cache?url_pattern<span class="o">=</span>/&amp;filter_id<span class="o">=</span>100
+</code></pre>
 
-<table><thead>
-<tr>
-<th>Logic</th>
-<th>Matches</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Union</td>
-<td>users who match any of the patterns</td>
-</tr>
-<tr>
-<td>Intersection</td>
-<td>users who many all of the patterns</td>
-</tr>
-</tbody></table>
+<blockquote>
+<p>Response</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"search"</span><span class="w"> </span><span class="p">:[[</span><span class="s2">"/"</span><span class="p">]],</span><span class="w">
+    </span><span class="nt">"response"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+              </span><span class="p">{</span><span class="nt">"count"</span><span class="p">:</span><span class="mi">50</span><span class="p">,</span><span class="nt">"domain"</span><span class="p">:</span><span class="s2">"forbes.com"</span><span class="p">,</span><span class="nt">"uniques"</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span><span class="nt">"url"</span><span class="p">:</span><span class="s2">"https://www.forbes.com/bill-gates"</span><span class="p">,</span><span class="nt">"num_users"</span><span class="p">:</span><span class="mf">200000.0</span><span class="p">,</span><span class="nt">"parent_category_name"</span><span class="p">:</span><span class="s2">"News"</span><span class="p">,</span><span class="nt">"idf"</span><span class="p">:</span><span class="mf">2.8631419342</span><span class="p">,</span><span class="nt">"category_name"</span><span class="p">:</span><span class="s2">"Business News"</span><span class="p">},</span><span class="w"> </span><span class="p">{}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
 
-<p>Finally, the eligible users will be selected out of the overall data set and an aggregated result will be returned. Specifically,</p>
-
-<table><thead>
-<tr>
-<th>Logic</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Union</td>
-<td>This is an aggregation of all of the resulting patterns</td>
-</tr>
-<tr>
-<td>Intersection</td>
-<td>The resulting data set is an aggregation of all (URL, user) combinations from any pattern in search parameter but limited to the subset of the user groups</td>
-</tr>
-</tbody></table>
-
-          <h1 id="multi-pattern-group-search">Multi Pattern Group search</h1>
-
-<p>This endpoint allows us search for statistics about the sequential intersection of multiple pattern groups. This API builds off of the pattern group concept introduced in the [Pattern Group URL Search] API.</p>
-
-<p>Similar to the the Pattern Group URL search, this API shares the idea of the pattern group, but limits the logic of a pattern group to look only at the union of a pattern. </p>
-
-<p>Similar to the other search APIs. this API allows the user to specify:</p>
-
-<ul>
-<li>the logic used between pattern groups (union, funnel)</li>
-<li>the result type: (count, uids, domains)</li>
-</ul>
-
-<p>To represent the logic between pattern groups, the &ldquo;&gt;&rdquo; operator is used to demarcate distinct pattern groups. This operators was chosen because it helps to represent the sequential nature of the computed intersection (the default behavior of the API).</p>
-
-<h2 id="http-request">HTTP Request</h2>
-
-<p><code class="prettyprint">GET http://crusher.getrockerbox.com/crusher/multi_pattern_search/&lt;QUERY_TYPE&gt;</code></p>
-
-<h2 id="query-parameters">Query Parameters</h2>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>search</td>
-<td>None</td>
-<td>this is a <strong>required</strong> field. the search string is made up of &gt; seperated pattern groups. See the pattern group API to</td>
-</tr>
-<tr>
-<td>logic</td>
-<td>funnel</td>
-<td>this specifies whether were looking at the union or intersection of the pattern groups.</td>
-</tr>
-<tr>
-<td>format</td>
-<td>json</td>
-<td>this specifies the response type. currently only json is supported</td>
-</tr>
-<tr>
-<td>timeout</td>
-<td>60</td>
-<td>this is the amount of time in seconds we will attempt to process the query before timing out. Its default and max value is 60 seconds</td>
-</tr>
-</tbody></table>
-
-<h2 id="more-about-multiple-pattern-group-evaluation">More about multiple pattern group evaluation</h2>
-
-<p>The search parameter is made up of multiple pattern groups seperated by <strong>&gt;</strong> characters. </p>
-
-<p><code class="prettyprint">
-?search=[pattern_group1]&gt;[pattern_group_2]&gt;[pattern_group_3]
-</code></p>
-
-<p>When this API evaluates each pattern group, it uses the default <strong>UNION</strong> logic to evaluate the pattern group meaning that all users who visited a URL that matched either pattern in a group are included. Also note that within a pattern the default <strong>AND</strong> logic is also used.</p>
-
-<h2 id="logic-operator">Logic Operator</h2>
-
-<p>The <strong>&gt;</strong> operator then takes the result of each pattern group and evaluates either:</p>
-
-<ul>
-<li>a sequential intersection (a funnel)</li>
-<li>a union (a union)</li>
-</ul>
-
-<h2 id="logic-types">Logic Types:</h2>
-
-<p><strong>1. Funnel (Sequential intersection)</strong></p>
-
-<p>The default behavior is to perform a sequential intersection (funnel) of users. More specifically, this is best described as:</p>
-
-<table><thead>
-<tr>
-<th>Step</th>
-<th>Users</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>1</td>
-<td>User in Group 1</td>
-</tr>
-<tr>
-<td>2</td>
-<td>User in Group 1 AND Group 2</td>
-</tr>
-<tr>
-<td>3</td>
-<td>User in Group 1 AND Group 2 AND Group 3</td>
-</tr>
-</tbody></table>
-
-<p>implying that each sequential group will be smaller than the previous. </p>
-
-<p><strong>2. Union</strong></p>
-
-<p>The union logic type is included to make it convienent to get back information about the entire state space that the intersection is operating over. </p>
-
-<p>More specifically, we can describe this as follows:</p>
-
-<table><thead>
-<tr>
-<th>Step</th>
-<th>Users</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>1</td>
-<td>User in Group 1</td>
-</tr>
-<tr>
-<td>2</td>
-<td>User in Group 1 OR Group 2</td>
-</tr>
-<tr>
-<td>3</td>
-<td>User in Group 1 OR Group 2 OR Group 3</td>
-</tr>
-</tbody></table>
-
-<p>implying that each sequential group will be larger than the previous. </p>
-
-<h3 id="response-types">Response Types</h3>
-
-<p><strong>1. count</strong></p>
-
-<ul>
-<li>this is the count of users in each bucket</li>
-</ul>
-
-<p><strong>2. uids</strong></p>
-
-<ul>
-<li>this is the raw user ids for users in each bucket</li>
-</ul>
-
-<p><strong>3. domains</strong></p>
-
-<ul>
-<li>this is the domain associated with the users in each bucket</li>
-</ul>
-
-<p><strong>4. all</strong></p>
-
-<ul>
-<li>this is all of the information</li>
-</ul>
-
-<h2 id="example">Example</h2>
-
-<p>The following is an example of two URL pattern strings used as a search parameter:</p>
-
-<p><code class="prettyprint">/crusher/multi_pattern_search?search=signup&gt;nature|wild&gt;checkout</code></p>
-
-<p>Our evaluation for each step would then look like the following:</p>
-
-<table><thead>
-<tr>
-<th>Step</th>
-<th>Users</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>1</td>
-<td>Visited signup page</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Visited signup page AND visited a (nature OR wild) urls</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Visited signup page AND visited a (nature OR wild) urls AND checked out</td>
-</tr>
-</tbody></table>
-
-          <h1 id="funnel-search">Funnel Search</h1>
-
-<p>This endpoint is very similar to the multi pattern group search, in that it allows us to access the same type of information. 
-The only difference is that the Funnel Search API takes a funnel_id as a paramater, and performs the search based on that funnel&rsquo;s settings.</p>
-
-<p>This API supports the following query result types: (count, uids, domains)</p>
-
-<h2 id="http-request">HTTP Request</h2>
-
-<p><code class="prettyprint">GET http://crusher.getrockerbox.com/crusher/funnel/search/&lt;QUERY_TYPE&gt;?id=&lt;FUNNEL_ID&gt;</code></p>
+<p>For the most part User Defined Functions outside of domains full time minute have been deprecated. Older smaller aggregates have been deprecated in favor of the single domains full time minute aggregate. Some of these are still available and can be available upon request. These responses should be identical to the UDF endpoint. However, these endpoints should return the data far quicker than the uncached UDF endpoints. </p>
 
           <h1 id="errors">Errors</h1>
 
