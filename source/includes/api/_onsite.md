@@ -6,4 +6,3 @@ The search APIs give us the ability to look at the following characterstics abou
 - URLs: these are the URLs that match the pattern
 - UIDs: these are the UIDs that match the pattern
 - Count: this gives us a summary about the pattern
-- Timeseries: this gives us a timeseries summary about how the pattern changes over time

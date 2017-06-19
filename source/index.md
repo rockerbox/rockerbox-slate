@@ -14,7 +14,6 @@ includes:
   - api/funnel
   - api/onsite
   - api/udf
-  - api/endpoints
   - api/cache
 
   - errors
