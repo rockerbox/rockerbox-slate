@@ -584,7 +584,9 @@ curl http://hindsight.getrockerbox.com/crusher/v1/visitor/domains?url_pattern<sp
 curl http://slave97:31682/prototype/domains_full_time_minute?filter_id<span class="o">=</span>&lt;FILTER_ID&gt;&amp;keyword<span class="o">=</span>clothing
 </code></pre>
 
-<p>The parameters available for prototype endpoints are <code class="prettyprint">keyword</code>, <code class="prettyprint">filter_id</code> and <code class="prettyprint">domain</code>. The parameter <code class="prettyprint">filter_id</code> is required for all requests along with one of the two other parameters. This is only avialable for a subset of advertisers and you must be logged in as one of those users to access.</p>
+<p>The parameters available for prototype endpoints are <code class="prettyprint">keyword</code>, <code class="prettyprint">filter_id</code> and <code class="prettyprint">domain</code>. The parameter <code class="prettyprint">filter_id</code> is required for all requests along with one of the two other parameters. This is only avialable for a subset of advertisers and you must be logged in as one of those users to access. These is also an optional parameters for limiting the number of records included in the aggregation of the response data. This parameter is <code class="prettyprint">limit</code> the default value is 25000. These means that by default 25000 offsite user events will be included by default. This limit can any integer and a number such as 1000000 should be used for the entirety of the data. However, number greater 100000 typically take upwards of 25-30+ seconds for the full response.</p>
+
+<p>It is also possible to apply a user defined function to the datasets from the prototype. However, there is currently only one udf available for this application at the current time (domains_full_time_minute). Other UDFs may be available in the future with the above access pattern and the same udf name convention as the main Hindsight application.</p>
 
           <h1 id="errors">Errors</h1>
 
