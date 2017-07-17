@@ -338,6 +338,58 @@ EOF
 
 <p>The response from this endpoint will be a standard action json object described above in the anatomy of an action.</p>
 
+<h2 id="creating-campaign-based-actions">Creating Campaign Based Actions</h2>
+
+<blockquote>
+<p>Create</p>
+</blockquote>
+<pre class="highlight shell"><code>cat <span class="sh">&lt;&lt;EOF &gt; action
+{
+    "action_name": "served",
+    "type": "campaign"
+}
+EOF
+</span>curl -X POST -d @action http://hindsight.getrockerbox.com/crusher/funnel/action
+
+cat <span class="sh">&lt;&lt;EOF &gt; action
+{
+    "action_name": "served",
+    "type": "campaign",
+    "campaign_id":12345
+}
+EOF
+</span>curl -X POST -d @action http://hindsight.getrockerbox.com/crusher/funnel/action
+
+cat <span class="sh">&lt;&lt;EOF &gt; action
+{
+    "action_name": "served",
+    "type": "campaign",
+    "group_ids":[1234]
+}
+EOF
+</span>curl -X POST -d @action http://hindsight.getrockerbox.com/crusher/funnel/action
+
+</code></pre>
+
+<blockquote>
+<p>Response</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ok"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"response"</span><span class="p">:{</span><span class="w">
+        </span><span class="nt">"advertiser"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_advertiser"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"action_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"served"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"filter_id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="err">aaaaabbbbbbcc</span><span class="mi">1234</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>To create a new action, post a json object that has a name to identify the <code class="prettyprint">action_name</code> and type. If type is not supplied then it will be assumed an onsite based action of type <code class="prettyprint">action</code>. If type is <code class="prettyprint">action</code> then url_pattern is a required parameter. If type is of <code class="prettyprint">campaign</code> then 3 scenarios are possible. If nothing other than action_name and type are specified than a segment with all served data for the advertiser and vendor is created (vendor is currently rockerbox but can be change with a url parameter on request for data, may change in future). If campaign_id is included then a segment based on a specific campaign id will be created. The final scenario is if group_ids is specified, if so filter will be used to filter for only those campaign ids present in the line item hierarchy group ids passed in as the group_ids parameter which must be an array. The value for filter_id will be an int if type is <code class="prettyprint">action</code> and a varchar is type is <code class="prettyprint">campaign</code> </p>
+
+<p><code class="prettyprint">POST http://hindsight.ai/crusher/funnel/action?format=json</code></p>
+
+<p>The response from this endpoint will be a standard action json object described above in the anatomy of an action.</p>
+
 <h2 id="deleting-an-action">Deleting an action</h2>
 
 <blockquote>
