@@ -437,7 +437,6 @@ EOF
 }
 EOF
 </span>curl -X POST -d @action http://hindsight.getrockerbox.com/crusher/funnel/action
-
 </code></pre>
 
 <blockquote>
@@ -456,8 +455,6 @@ EOF
 <p>To create a new action, post a json object that has a name to identify the <code class="prettyprint">action_name</code> and type. If type is not supplied then it will be assumed an onsite based action of type <code class="prettyprint">action</code>. If type is <code class="prettyprint">action</code> then url_pattern is a required parameter. If type is of <code class="prettyprint">campaign</code> then 3 scenarios are possible. If group_ids is specified a filter will be used to filter for only those served ads that match the campaign ids present in the line item hierarchy group ids passed in as the group_ids parameter. The group_ids parameter must be an array. The value for filter_id will be an int if type is <code class="prettyprint">action</code> and a varchar is type is <code class="prettyprint">campaign</code> </p>
 
 <p><code class="prettyprint">POST http://hindsight.ai/crusher/funnel/action?format=json</code></p>
-
-<p>The response from this endpoint will be a standard action json object described above in the anatomy of an action.</p>
 
 <h2 id="deleting-an-action">Deleting an action</h2>
 
